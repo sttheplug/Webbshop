@@ -2,26 +2,26 @@ package com.example.webbshop.bo.Service;
 
 import com.example.webbshop.bo.model.User;
 
+import java.util.List;
+
 public class UserLoginTester {
     public static void main(String[] args) {
-        // Create an instance of UserService
+        // Create the UserService object
         UserService userService = new UserService();
 
-        // Define the username and password to test with
-        String testUsername = "john_doe";
-        String testPassword = "password123";
-
-        // Attempt to log in with the provided username and password
-        User loggedInUser = userService.loginUser(testUsername, testPassword);
-
-        // Check if the login was successful
-        if (loggedInUser != null) {
-            System.out.println("Login successful!");
-            System.out.println("User ID: " + loggedInUser.getUserID());
-            System.out.println("Username: " + loggedInUser.getUsername());
-            System.out.println("Role: " + loggedInUser.getRole());
+        // Fetch all users
+        List<User> users = userService.getAllUsers();
+        userService.updateUserNameById(3, "Simon1");
+        userService.updatePasswordById(3, "Godis5");
+        userService.updateRoleById(4, User.Role.admin);
+        // Print user details
+        if (users.isEmpty()) {
+            System.out.println("No users found.");
         } else {
-            System.out.println("Login failed! Invalid username or password.");
+            System.out.println("List of users:");
+            for (User user : users) {
+                System.out.println("UserID: " + user.getUserID() + ", Username: " + user.getUsername() + ", Role: " + user.getRole());
+            }
         }
     }
 }

@@ -10,10 +10,10 @@ import java.util.List;
 
 public class UserDAO {
     private static final String INSERT_USER_SQL = "INSERT INTO users (username, Password, role) VALUES (?, ?, ?)";
-    private static final String SELECT_USER_BY_ID = "SELECT * FROM user WHERE UserID = ?";
+    private static final String SELECT_USER_BY_ID = "SELECT * FROM user WHERE user_id = ?";
     private static final String SELECT_ALL_USERS = "SELECT * FROM user";
-    private static final String UPDATE_USER = "UPDATE user SET username = ?, Password = ?, role = ? WHERE UserID = ?";
-    private static final String DELETE_USER = "DELETE FROM user WHERE UserID = ?";
+    private static final String UPDATE_USER = "UPDATE user SET username = ?, Password = ?, role = ? WHERE user_id = ?";
+    private static final String DELETE_USER = "DELETE FROM user WHERE user_id = ?";
     private static final String SELECT_USER_BY_NAME_PASS = "SELECT * FROM user WHERE username = ? AND password = ?";
 
     public boolean addUser(User user) {
@@ -122,7 +122,7 @@ public class UserDAO {
 
             statement.setString(1, user.getUsername());
             statement.setString(2, user.getPassword());
-            statement.setString(3, user.getRole().name()); // Convert Enum to String
+            statement.setString(3, user.getRole().name());
             statement.setInt(4, user.getUserID());
             rowUpdated = statement.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -147,7 +147,7 @@ public class UserDAO {
 
     public static void main(String[] args) {
         // Create a new User object
-        User newUser = new User("john_doe", "password123", User.Role.customer);
+        User newUser = new User("Alan", "password1223", User.Role.customer);
 
         // Create the UserDAO object
         UserDAO userDAO = new UserDAO();
