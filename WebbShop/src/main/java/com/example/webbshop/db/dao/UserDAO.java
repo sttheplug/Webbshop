@@ -3,7 +3,6 @@ package com.example.webbshop.db.dao;
 import com.example.webbshop.bo.model.User;
 import com.example.webbshop.db.DatabaseConnectionManager;
 
-import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

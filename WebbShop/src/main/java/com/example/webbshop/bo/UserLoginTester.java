@@ -1,5 +1,6 @@
-package com.example.webbshop.bo.Service;
+package com.example.webbshop.bo;
 
+import com.example.webbshop.bo.Service.UserService;
 import com.example.webbshop.bo.model.User;
 
 public class UserLoginTester {
