@@ -6,7 +6,7 @@ public class User {
     private String password;           // Represents Password in the database
 
     public enum Role {
-        ADMIN, CUSTOMER, WAREHOUSE_STAFF,
+        admin, customer, warehouse_staff,
     }
     private Role role;
     public User() {
