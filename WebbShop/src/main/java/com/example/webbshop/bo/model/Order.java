@@ -5,15 +5,15 @@ import java.sql.Timestamp;
 public class Order {
     private int orderId;          // order_id (Primary Key)
     private int userId;           // user_id (Foreign Key from Users table)
+    private int totalPrice;       // total_price column
     private Timestamp orderDate;  // order_date column for when the order was placed
-    private String status;        // status column to represent the current order status (e.g., 'pending', 'completed')
     public Order() {
     }
-    public Order(int orderId, int userId, Timestamp orderDate, String status) {
+    public Order(int orderId, int userId, int totalPrice, Timestamp orderDate) {
         this.orderId = orderId;
         this.userId = userId;
+        this.totalPrice = totalPrice;
         this.orderDate = orderDate;
-        this.status = status;
     }
 
     // Getters and Setters
@@ -33,19 +33,19 @@ public class Order {
         this.userId = userId;
     }
 
+    public int getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(int totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
     public Timestamp getOrderDate() {
         return orderDate;
     }
 
     public void setOrderDate(Timestamp orderDate) {
         this.orderDate = orderDate;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 }
