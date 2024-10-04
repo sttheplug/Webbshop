@@ -84,7 +84,6 @@ public class OrderDAO {
                     if (generatedKeys.next()) {
                         int generatedOrderId = generatedKeys.getInt(1);
                         order.setOrderId(generatedOrderId); // Set the generated order ID in the Order object
-
                         // Insert order items
                         for (Product product : order.getOrderItems()) {
                             insertOrderItem(generatedOrderId, product);
@@ -139,11 +138,4 @@ public class OrderDAO {
         }
         return orderItems;
     }
-    /*public Product(int productId, String productName, int price, int stockQuantity, Timestamp createdAt) {
-        this.productId = productId;
-        this.productName = productName;
-        this.price = price;
-        this.stockQuantity = stockQuantity;
-        this.createdAt = createdAt;
-    }*/
 }

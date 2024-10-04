@@ -7,15 +7,16 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class UserService {
-    private final UserDAO userDAO;
+    private UserDAO userDAO;
 
     public UserService() {
         this.userDAO = new UserDAO();
     }
 
-    public boolean registerUser(String username, String password, User.Role role) {
+    public User registerUser(String username, String password, User.Role role) {
         User user = new User(username, password, role);
         return userDAO.addUser(user);
+
     }
 
     public User loginUser(String username, String password) {
@@ -33,19 +34,20 @@ public class UserService {
     public boolean deleteUserById(int id) {
         return userDAO.deleteUser(id);
     }
-    public boolean updateUserNameById(int id, String userName) {
+
+    private boolean updateUserNameById(int id, String userName) {
         return userDAO.updateUser(
                 new User(id, userName, searchUserById(id).getPassword(), searchUserById(id).getRole())
         );
     }
 
-    public boolean updatePasswordById(int id, String password) {
+    private boolean updatePasswordById(int id, String password) {
         return userDAO.updateUser(
                 new User(id, searchUserById(id).getUsername(), password, searchUserById(id).getRole())
         );
     }
 
-    public boolean updateRoleById(int id, User.Role role) {
+    private boolean updateRoleById(int id, User.Role role) {
         return userDAO.updateUser(
                 new User(id, searchUserById(id).getUsername(), searchUserById(id).getPassword(), role));
     }

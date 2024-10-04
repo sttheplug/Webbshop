@@ -8,41 +8,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDAO {
-    private static final String INSERT_USER_SQL = "INSERT INTO users (username, Password, role) VALUES (?, ?, ?)";
+    private static final String INSERT_USER_SQL = "INSERT INTO user (username, Password, role) VALUES (?, ?, ?)";
     private static final String SELECT_USER_BY_ID = "SELECT * FROM user WHERE user_id = ?";
     private static final String SELECT_ALL_USERS = "SELECT * FROM user";
     private static final String UPDATE_USER = "UPDATE user SET username = ?, Password = ?, role = ? WHERE user_id = ?";
     private static final String DELETE_USER = "DELETE FROM user WHERE user_id = ?";
     private static final String SELECT_USER_BY_NAME_PASS = "SELECT * FROM user WHERE username = ? AND password = ?";
 
-    public boolean addUser(User user) {
-        String INSERT_USER_SQL = "INSERT INTO user (username, password, role) VALUES (?, ?, ?)";
-
+    public User addUser(User user) {
         try (Connection connection = DatabaseConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER_SQL, Statement.RETURN_GENERATED_KEYS)) {
 
             preparedStatement.setString(1, user.getUsername());
             preparedStatement.setString(2, user.getPassword());
-            preparedStatement.setString(3, user.getRole().name()); // Convert Enum to String
+            preparedStatement.setString(3, user.getRole().name());
 
-            int affectedRows = preparedStatement.executeUpdate(); // Execute the update statement
-
-            // If rows were affected, insertion was successful
+            // Execute update and retrieve the generated keys
+            int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows > 0) {
                 try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
-                        int generatedUserID = generatedKeys.getInt(1);
-                        user.setUserID(generatedUserID); // Set the generated userID in the User object
+                        user.setUserID(generatedKeys.getInt(1));
                     }
                 }
-                return true; // Return true if insertion was successful
-            } else {
-                return false; // No rows were affected, insertion failed
             }
+            return user;
         } catch (SQLException e) {
             e.printStackTrace();
-            return false; // Return false if there was a SQLException
         }
+        return null;
     }
 
     public User getUserByUsernameAndPassword(String username, String password) {
@@ -143,20 +137,4 @@ public class UserDAO {
         }
         return rowDeleted;
     }
-
-    public static void main(String[] args) {
-        // Create a new User object
-        User newUser = new User("Alan", "password1223", User.Role.customer);
-
-        // Create the UserDAO object
-        UserDAO userDAO = new UserDAO();
-
-        // Add the user to the database
-        userDAO.addUser(newUser);
-
-        // Optionally, verify by fetching all users or checking the database directly
-        System.out.println("User added to the database.");
-    }
-
-
 }

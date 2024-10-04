@@ -2,6 +2,7 @@ package com.example.webbshop.bo.Service;
 
 import com.example.webbshop.bo.model.Order;
 import com.example.webbshop.bo.model.Product;
+import com.example.webbshop.bo.model.User;
 import com.example.webbshop.db.dao.OrderDAO;
 import com.example.webbshop.db.dao.UserDAO;
 
@@ -23,13 +24,18 @@ public class OrderService {
         return this.orderDAO.getAllOrders();
     }
 
-    public Order addOrder(int userId, int totalPrice, Timestamp orderDate, List<Product> items){
+    public Order addOrder(User user, Timestamp orderDate){
 
-        return this.orderDAO.addOrder(new Order(userId, totalPrice, orderDate, items));
+        List<Product> items = user.getCart();
+        int totalPrice = items.stream().mapToInt(Product::getPrice).sum();
+        Order newOrder = new Order(user.getUserID(), totalPrice, orderDate, items);
+        Order addedOrder = orderDAO.addOrder(newOrder);
+
+        if (addedOrder != null) {
+            user.clearCart();
+        }
+
+        return addedOrder;
     }
-    public static void main(String[] args) {
-        // Create an instance of the OrderService
 
-
-    }
 }

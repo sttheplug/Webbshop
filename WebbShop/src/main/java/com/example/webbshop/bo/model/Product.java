@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 
 public class Product {
-    private final int productId;
+    private  int productId;
     private final String productName;
     private int price;
     private int stockQuantity;
@@ -18,6 +18,15 @@ public class Product {
         this.createdAt = createdAt;
     }
 
+    public Product(String productName, int price, int stockQuantity, Timestamp createdAt) {
+        this.productName = productName;
+        this.price = price;
+        this.stockQuantity = stockQuantity;
+        this.createdAt = createdAt;
+    }
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
     public int getProductId() {
         return productId;
     }

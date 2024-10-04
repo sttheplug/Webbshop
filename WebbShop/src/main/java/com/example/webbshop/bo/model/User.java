@@ -14,6 +14,7 @@ public class User {
         admin, customer, warehouse_staff,
     }
     private Role role;
+
     public User() {
     }
 
@@ -73,5 +74,8 @@ public class User {
 
     public void removeFromCart(Product product){
         this.cart.remove(product);
+    }
+    public void clearCart() {
+        this.cart.clear();
     }
 }

@@ -15,9 +15,9 @@ public class ProductService {
         productDAO = new ProductDAO();
     }
 
-    public void addProduct(String productName, int price, int stockQuantity){
-        Product product = new Product(0, productName, price, stockQuantity, null);
-        productDAO.addProduct(product);
+    public Product addProduct(String productName, int price, int stockQuantity){
+        Product product = new Product(productName, price, stockQuantity, null);
+        return productDAO.addProduct(product);
     }
 
     // Method to update product details
