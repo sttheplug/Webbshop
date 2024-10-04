@@ -1,5 +1,7 @@
 package com.example.webbshop.bo.model;
 
+import com.example.webbshop.ui.DTO.ProductDTO;
+
 import java.sql.Timestamp;
 import java.time.LocalDate;
 
@@ -57,5 +59,10 @@ public class Product {
 
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public static ProductDTO toDTO(Product product){
+        return new ProductDTO(product.getProductId(), product.getProductName(),
+                product.getPrice(), product.getStockQuantity());
     }
 }

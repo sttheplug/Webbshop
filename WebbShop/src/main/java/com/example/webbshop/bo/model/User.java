@@ -1,5 +1,7 @@
 package com.example.webbshop.bo.model;
 
+import com.example.webbshop.ui.DTO.UserDTO;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,5 +86,9 @@ public class User {
            price += product.getPrice();
         }
         return price;
+    }
+
+    public static UserDTO toDTO(User user) {
+        return new UserDTO(user.getUserID(), user.getUsername(), user.getRole(), user.getCart());
     }
 }

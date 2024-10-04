@@ -1,5 +1,8 @@
 package com.example.webbshop.bo.model;
 
+import com.example.webbshop.ui.DTO.OrderDTO;
+import com.example.webbshop.ui.DTO.ProductDTO;
+
 import java.io.LineNumberInputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -63,5 +66,14 @@ public class Order {
     }
     public List<Product> getOrderItems(){
         return new ArrayList<>(orderItems);
+    }
+
+    public static OrderDTO toDTO(Order order){
+        List<ProductDTO> newDTOList = new ArrayList<>();
+        for(Product product : order.getOrderItems()) {
+            newDTOList.add(new ProductDTO(product.getProductId(), product.getProductName(), product.getPrice(), product.getStockQuantity()));
+        }
+        return new OrderDTO(order.getOrderId(), order.getUserId(), order.getTotalPrice(),
+                order.getOrderDate(), newDTOList);
     }
 }

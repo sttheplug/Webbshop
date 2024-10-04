@@ -1,20 +1,34 @@
 package com.example.webbshop.ui.DTO;
 
+import com.example.webbshop.bo.model.Product;
 import com.example.webbshop.bo.model.User;
+
+import java.util.List;
 
 public class UserDTO {
     private int userId;
     private String username;
     private User.Role role;
+    private List<Product> cart;
 
     // Constructor with parameters
-    public UserDTO(int userId, String username, User.Role role) {
+    public UserDTO(int userId, String username, User.Role role, List<Product> cart) {
         this.userId = userId;
         this.username = username;
         this.role = role;
+        this.cart = cart;
     }
 
     // Getters and Setters
+
+    public List<Product> getCart() {
+        return cart;
+    }
+
+    public void setCart(List<Product> cart) {
+        this.cart = cart;
+    }
+
     public int getUserId() {
         return userId;
     }
@@ -39,8 +53,4 @@ public class UserDTO {
         this.role = role;
     }
 
-    // Method to convert a User to UserDTO
-    public static UserDTO fromUser(User user) {
-        return new UserDTO(user.getUserID(), user.getUsername(), user.getRole());
-    }
 }
