@@ -78,4 +78,11 @@ public class User {
     public void clearCart() {
         this.cart.clear();
     }
+    public int getCartPrice() {
+        int price = 0;
+        for(Product product : this.cart) {
+           price += product.getPrice();
+        }
+        return price;
+    }
 }

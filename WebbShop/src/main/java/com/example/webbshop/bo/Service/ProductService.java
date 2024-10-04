@@ -33,7 +33,7 @@ public class ProductService {
                 new Product(productId, product.getProductName(), product.getPrice(), quantity, product.getCreatedAt())
         );
     }
-    public Product getProductById(int productId) throws SQLException {
+    public Product getProductById(int productId){
         return productDAO.getProductById(productId);
     }
     public boolean deleteProduct(int productId) {

@@ -25,8 +25,10 @@ public class OrderService {
     }
 
     public Order addOrder(User user, Timestamp orderDate){
-
         List<Product> items = user.getCart();
+        if (items.size() == 0) {
+            throw new RuntimeException();
+        } else {
         int totalPrice = items.stream().mapToInt(Product::getPrice).sum();
         Order newOrder = new Order(user.getUserID(), totalPrice, orderDate, items);
         Order addedOrder = orderDAO.addOrder(newOrder);
@@ -36,6 +38,6 @@ public class OrderService {
         }
 
         return addedOrder;
+        }
     }
-
 }
