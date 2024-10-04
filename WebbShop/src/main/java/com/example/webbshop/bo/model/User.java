@@ -1,9 +1,14 @@
 package com.example.webbshop.bo.model;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class User {
     // Fields that correspond to the columns in the database
     private int userID;                // Represents UserID in the database
     private String username;           // Represents username in the database
     private String password;           // Represents Password in the database
+    private List<Product> cart;
 
     public enum Role {
         admin, customer, warehouse_staff,
@@ -18,11 +23,13 @@ public class User {
         this.username = username;
         this.password = password;
         this.role = role;
+        cart = new ArrayList<>();
     }
     public User(String username, String password, Role role) {
         this.username = username;
         this.password = password;
         this.role = role;
+        cart = new ArrayList<>();
     }
 
     public int getUserID() {
@@ -57,13 +64,14 @@ public class User {
         this.role = role;
     }
 
-    // Optional: Override toString() method for debugging purposes
-    @Override
-    public String toString() {
-        return "User{" +
-                "userID=" + userID +
-                ", username='" + username + '\'' +
-                ", role='" + role + '\'' +
-                '}';
+    public List<Product> getCart() {
+        return new ArrayList<>(cart);
+    }
+    public void addToCart(Product product) {
+        this.cart.add(product);
+    }
+
+    public void removeFromCart(Product product){
+        this.cart.remove(product);
     }
 }

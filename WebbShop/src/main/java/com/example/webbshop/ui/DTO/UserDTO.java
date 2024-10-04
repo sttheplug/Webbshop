@@ -1,6 +1,5 @@
-package com.example.webbshop.bo.DTO;
+package com.example.webbshop.ui.DTO;
 
-import com.example.webbshop.bo.DTO.*;
 import com.example.webbshop.bo.model.User;
 
 public class UserDTO {
