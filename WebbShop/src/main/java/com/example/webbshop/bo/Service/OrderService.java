@@ -4,7 +4,6 @@ import com.example.webbshop.bo.model.Order;
 import com.example.webbshop.bo.model.Product;
 import com.example.webbshop.bo.model.User;
 import com.example.webbshop.db.dao.OrderDAO;
-import com.example.webbshop.db.dao.UserDAO;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -38,6 +37,21 @@ public class OrderService {
         }
 
         return addedOrder;
+        }
+    }
+    public boolean updateOrder(Order order){
+        return this.updateOrder(order);
+    }
+
+    public static void main(String[] args){
+        List<Order> orders;
+        OrderService orderService = new OrderService();
+        orders = orderService.getOrders();
+        for(Order order:orders){
+            System.out.println(order.getOrderId());
+            System.out.println(order.getUserId());
+            System.out.println(order.getTotalPrice());
+            System.out.println(order.getOrderDate());
         }
     }
 }

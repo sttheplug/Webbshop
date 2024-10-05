@@ -13,6 +13,8 @@ public class OrderDAO {
     private static final String SELECT_ALL_ORDERS = "SELECT * FROM orders";
     private static final String INSERT_ORDER_SQL = "INSERT INTO orders (user_id, total_price, order_date) VALUES (?, ?, ?)";
     private static final String INSERT_ORDER_ITEM_SQL = "INSERT INTO orderitems (order_id, product_id, quantity) VALUES (?, ?, ?)";
+    private static final String UPDATE_ORDER_SQL = "UPDATE orders SET packed = ? WHERE order_id = ?";
+
 
     // Method to retrieve an order by ID
     public Order getOrderById(int orderId) {
@@ -115,27 +117,49 @@ public class OrderDAO {
     // Method to retrieve order items for a given order ID
     private List<Product> getOrderItemsByOrderId(int orderId) {
         List<Product> orderItems = new ArrayList<>();
-        String SELECT_ORDER_ITEMS_BY_ORDER_ID = "SELECT * FROM orderitems WHERE order_id = ?";
+
+        // Query to get products and their quantities for a specific order_id
+        String SELECT_ORDER_ITEMS_BY_ORDER_ID =
+                "SELECT p.product_id, p.product_name, p.price, oi.quantity, p.created_at " +
+                        "FROM order_items oi " +
+                        "JOIN products p ON oi.product_id = p.product_id " +
+                        "WHERE oi.order_id = ?";
+
         try (Connection connection = DatabaseConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ORDER_ITEMS_BY_ORDER_ID)) {
 
-            preparedStatement.setInt(1, orderId);
+            preparedStatement.setInt(1, orderId);  // Set the order_id parameter
             ResultSet rs = preparedStatement.executeQuery();
 
             while (rs.next()) {
                 int productId = rs.getInt("product_id");
                 String productName = rs.getString("product_name");
                 int price = rs.getInt("price");
-                int quantity = rs.getInt("stock_quantity");
+                int quantity = rs.getInt("quantity");  // This comes from the 'order_items' table
                 Timestamp createdAt = rs.getTimestamp("created_at");
-
-                // Create Product object, you might need to adjust this part according to your Product class
-                Product product = new Product(productId, productName, price, quantity, createdAt); // Assuming Product constructor with ID and quantity
+                Product product = new Product(productId, productName, price, quantity, createdAt);  // Assuming you have such a constructor
                 orderItems.add(product);
             }
         } catch (SQLException e) {
+            e.printStackTrace();  // Handle the exception properly in production
+        }
+
+        return orderItems;  // Return the list of products in the order
+    }
+
+
+
+
+    public boolean updateOrder(Order order) {
+        try (Connection conn = DatabaseConnectionManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(UPDATE_ORDER_SQL)) {
+            stmt.setBoolean(1, order.isPacked());  // Update packed status
+            stmt.setInt(2, order.getOrderId());    // Update the order based on its ID
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        return orderItems;
+        return false;
     }
 }

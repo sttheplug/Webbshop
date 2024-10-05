@@ -14,6 +14,7 @@ public class Order {
     private int totalPrice;       // total_price column
     private Timestamp orderDate;  // order_date column for when the order was placed
     private List<Product> orderItems;
+    private boolean packed;
     public Order() {
     }
     public Order(int orderId, int userId, int totalPrice, Timestamp orderDate, List<Product> items) {
@@ -21,14 +22,16 @@ public class Order {
         this.userId = userId;
         this.totalPrice = totalPrice;
         this.orderDate = orderDate;
-        orderItems = new ArrayList<>(items);
+        this.orderItems = (items != null) ? new ArrayList<>(items) : new ArrayList<>();
+        packed = false;
     }
 
     public Order(int userId, int totalPrice, Timestamp orderDate, List<Product> items) {
         this.userId = userId;
         this.totalPrice = totalPrice;
         this.orderDate = orderDate;
-        orderItems = new ArrayList<>(items);
+        this.orderItems = (items != null) ? new ArrayList<>(items) : new ArrayList<>();
+        packed = false;
     }
 
 
@@ -66,6 +69,12 @@ public class Order {
     }
     public List<Product> getOrderItems(){
         return new ArrayList<>(orderItems);
+    }
+    public boolean isPacked() {
+        return packed;
+    }
+    public void setPacked(boolean packed) {
+        this.packed = packed;
     }
 
     public static OrderDTO toDTO(Order order){
