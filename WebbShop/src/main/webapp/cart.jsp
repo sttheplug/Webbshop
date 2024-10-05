@@ -1,6 +1,6 @@
-<%@ page import="com.example.webbshop.bo.model.Product" %>
+<%@ page import="com.example.webbshop.ui.DTO.ProductDTO" %>
 <%@ page import="java.util.List" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
     <title>Your Cart</title>
@@ -109,7 +109,7 @@
 
     <%
         // Fetch the cart items from the session (or request attribute)
-        List<Product> cartItems = (List<Product>) request.getAttribute("cartItems");
+        List<ProductDTO> cartItems = (List<ProductDTO>) request.getAttribute("cartItems");
 
         // Initialize the total price variable
         double totalPrice = 0;
@@ -126,7 +126,7 @@
         </tr>
         <%
             // Loop through the cart items and display each one in the table
-            for (Product product : cartItems) {
+            for (ProductDTO product : cartItems) { // Changed to ProductDTO
                 totalPrice += product.getPrice(); // Calculate total price by summing up the product prices
         %>
         <tr>

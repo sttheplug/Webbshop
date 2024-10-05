@@ -3,29 +3,39 @@ package com.example.webbshop.ui.DTO;
 import com.example.webbshop.bo.model.Product;
 import com.example.webbshop.bo.model.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserDTO {
     private int userId;
     private String username;
+    private String password;
     private User.Role role;
-    private List<Product> cart;
+    private List<ProductDTO> cart;
 
     // Constructor with parameters
-    public UserDTO(int userId, String username, User.Role role, List<Product> cart) {
+    public UserDTO(int userId, String username, String password, User.Role role, List<ProductDTO> cart) {
         this.userId = userId;
         this.username = username;
+        this.password = password;
         this.role = role;
         this.cart = cart;
     }
 
+    public UserDTO(int userId, String username, String password, User.Role role) {
+        this.userId = userId;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.cart = new ArrayList<>();
+    }
     // Getters and Setters
 
-    public List<Product> getCart() {
+    public List<ProductDTO> getCart() {
         return cart;
     }
 
-    public void setCart(List<Product> cart) {
+    public void setCart(List<ProductDTO> cart) {
         this.cart = cart;
     }
 
@@ -44,6 +54,13 @@ public class UserDTO {
     public void setUsername(String username) {
         this.username = username;
     }
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public User.Role getRole() {
         return role;
@@ -51,6 +68,23 @@ public class UserDTO {
 
     public void setRole(User.Role role) {
         this.role = role;
+    }
+    public void addToCart(ProductDTO product) {
+        this.cart.add(product);
+    }
+
+    public void removeFromCart(ProductDTO product){
+        this.cart.remove(product);
+    }
+    public void clearCart() {
+        this.cart.clear();
+    }
+    public int getCartPrice() {
+        int price = 0;
+        for(ProductDTO product : this.cart) {
+            price += product.getPrice();
+        }
+        return price;
     }
 
 }

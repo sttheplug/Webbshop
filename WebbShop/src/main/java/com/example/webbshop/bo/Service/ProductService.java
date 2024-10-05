@@ -2,10 +2,12 @@ package com.example.webbshop.bo.Service;
 
 import com.example.webbshop.bo.model.Product;
 import com.example.webbshop.db.dao.ProductDAO;
+import com.example.webbshop.ui.DTO.ProductDTO;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ProductService {
 

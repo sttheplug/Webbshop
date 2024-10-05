@@ -1,6 +1,6 @@
-<%@ page import="com.example.webbshop.bo.model.Product" %>
+<%@ page import="com.example.webbshop.ui.DTO.ProductDTO" %>
 <%@ page import="java.util.List" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
     <title>Products</title>
@@ -114,8 +114,8 @@
             <th>Action</th>
         </tr>
         <%
-            List<Product> products = (List<Product>) request.getAttribute("products");
-            for (Product product : products) {
+            List<ProductDTO> products = (List<ProductDTO>) request.getAttribute("products"); // Changed to ProductDTO
+            for (ProductDTO product : products) { // Changed to ProductDTO
         %>
         <tr>
             <td><%= product.getProductId() %></td>

@@ -1,6 +1,6 @@
-<%@ page import="com.example.webbshop.bo.model.Order" %>
+<%@ page import="com.example.webbshop.ui.DTO.OrderDTO" %>
 <%@ page import="java.util.List" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
     <title>Warehouse Dashboard</title>
@@ -83,12 +83,12 @@
         </tr>
 
         <%
-            List<Order> orders = (List<Order>) request.getAttribute("orders");
-            for (Order order : orders) {
+            List<OrderDTO> orders = (List<OrderDTO>) request.getAttribute("orders"); // Changed to OrderDTO
+            for (OrderDTO order : orders) { // Changed to OrderDTO
         %>
         <tr>
             <td><%= order.getOrderId() %></td>
-            <td><%= order.getUser().getUsername() %></td>
+            <td><%= order.getUserId() %></td>
             <td><%= order.getOrderDate() %></td>
             <td><%= order.isPacked() ? "Packed" : "Pending" %></td>
             <td>

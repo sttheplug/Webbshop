@@ -13,6 +13,7 @@ public class OrderDTO {
     private int totalPrice;
     private Timestamp orderDate;
     private List<ProductDTO> orderItems;
+    private boolean packed;
 
     public OrderDTO() {
     }
@@ -23,6 +24,7 @@ public class OrderDTO {
         this.totalPrice = totalPrice;
         this.orderDate = orderDate;
         this.orderItems = orderItems;
+        this.packed = false;
     }
 
     public int getOrderId() {
@@ -64,5 +66,9 @@ public class OrderDTO {
     public void setOrderItems(List<ProductDTO> orderItems) {
         this.orderItems = orderItems;
     }
+    public boolean isPacked() {
+        return packed;
+    }
+
 
 }

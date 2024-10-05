@@ -10,6 +10,6 @@ public class insertionuser {
     public static void main(String[] args) {
         UserService userService = new UserService();
 
-        userService.registerUser("Alan", "12345", User.Role.customer);
+        userService.registerUser("Alan", "12345", User.Role.warehouse_staff);
     }
 }

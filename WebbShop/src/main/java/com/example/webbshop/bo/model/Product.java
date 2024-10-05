@@ -7,11 +7,14 @@ import java.time.LocalDate;
 
 public class Product {
     private  int productId;
-    private final String productName;
+    private String productName;
     private int price;
     private int stockQuantity;
     private Timestamp createdAt;
 
+    public Product(){
+
+    }
     public Product(int productId, String productName, int price, int stockQuantity, Timestamp createdAt) {
         this.productId = productId;
         this.productName = productName;
@@ -35,6 +38,9 @@ public class Product {
 
     public String getProductName() {
         return productName;
+    }
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     public int getPrice() {
@@ -64,5 +70,16 @@ public class Product {
     public static ProductDTO toDTO(Product product){
         return new ProductDTO(product.getProductId(), product.getProductName(),
                 product.getPrice(), product.getStockQuantity());
+    }
+    public static Product convertToProduct(ProductDTO productDTO) {
+        if (productDTO == null) {
+            return null;
+        }
+        Product product = new Product();
+        product.setProductId(productDTO.getProductId());
+        product.setProductName(productDTO.getProductName());
+        product.setPrice(productDTO.getPrice());
+        product.setStockQuantity(productDTO.getStockQuantity());
+        return product;
     }
 }

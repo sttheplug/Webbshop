@@ -1,4 +1,5 @@
 <%@ page import="com.example.webbshop.bo.model.User" %>
+<%@ page import="com.example.webbshop.ui.DTO.UserDTO" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -37,7 +38,7 @@
 </head>
 <body>
 <div class="welcome-container">
-    <h1>Welcome, <%= ((User) session.getAttribute("loggedInUser")).getUsername() %>!</h1>
+    <h1>Welcome, <%= ((UserDTO) session.getAttribute("loggedInUser")).getUsername() %>!</h1>
     <p>Thank you for logging in. You will be redirected to the products page shortly...</p>
 </div>
 </body>

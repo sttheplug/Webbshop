@@ -1,4 +1,4 @@
-<%@ page import="com.example.webbshop.bo.model.Order" %>
+<%@ page import="com.example.webbshop.ui.DTO.OrderDTO" %>
 <%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
@@ -21,11 +21,22 @@
         th {
             background-color: #f2f2f2;
         }
+        .no-orders-message {
+            color: #e74c3c;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
 <h2>Admin Panel - Orders</h2>
 
+<%
+    List<OrderDTO> orders = (List<OrderDTO>) request.getAttribute("orders");
+    if (orders != null && !orders.isEmpty()) {
+%>
 <table>
     <tr>
         <th>Order ID</th>
@@ -34,8 +45,7 @@
         <th>Order Date</th>
     </tr>
     <%
-        List<Order> orders = (List<Order>) request.getAttribute("orders");
-        for (Order order : orders) {
+        for (OrderDTO order : orders) {  // Change here to use OrderDTO
     %>
     <tr>
         <td><%= order.getOrderId() %></td>
@@ -47,6 +57,13 @@
         }
     %>
 </table>
+<%
+} else {
+%>
+<div class="no-orders-message">No orders found.</div>
+<%
+    }
+%>
 
 </body>
 </html>

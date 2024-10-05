@@ -7,6 +7,9 @@ import com.example.webbshop.bo.model.Order;
 import com.example.webbshop.bo.model.Product;
 import com.example.webbshop.bo.model.User;
 
+import com.example.webbshop.ui.DTO.OrderDTO;
+import com.example.webbshop.ui.DTO.ProductDTO;
+import com.example.webbshop.ui.DTO.UserDTO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -17,6 +20,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.stream.Collectors;
 
 // Servlet mapped to multiple URL patterns
 @WebServlet({"/login", "/logout", "/products", "/cart", "/add-to-cart", "/checkout", "/admin", "/warehouse", "/pack-order", "/remove-from-cart"})
@@ -27,7 +31,6 @@ public class Controller extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        // Initialize service layers
         this.userService = new UserService();
         this.productService = new ProductService();
         this.orderService = new OrderService();
@@ -38,7 +41,7 @@ public class Controller extends HttpServlet {
         String path = request.getServletPath();
 
         HttpSession session = request.getSession(false);
-        User loggedInUser = session != null ? (User) session.getAttribute("loggedInUser") : null;
+        UserDTO loggedInUser = session != null ? (UserDTO) session.getAttribute("loggedInUser") : null;
 
         switch (path) {
             case "/login":
@@ -114,7 +117,7 @@ public class Controller extends HttpServlet {
                 handleCheckout(request, response);
                 break;
 
-            case "/remove-from-cart":  // Added case for removing items from the cart
+            case "/remove-from-cart":
                 handleRemoveFromCart(request, response);
                 break;
 
@@ -133,15 +136,15 @@ public class Controller extends HttpServlet {
         String password = request.getParameter("password");
 
         User user = userService.loginUser(username, password);
-
         if (user != null) {
+            UserDTO userDTO = User.toDTO(user);
             HttpSession session = request.getSession();
-            session.setAttribute("loggedInUser", user);
+            session.setAttribute("loggedInUser", userDTO);
 
             if (user.getRole() == User.Role.admin) {
                 response.sendRedirect("admin.jsp");
             } else if (user.getRole() == User.Role.warehouse_staff) {
-                response.sendRedirect("warehouse");
+                response.sendRedirect("warehouse.jsp");
             } else {
                 response.sendRedirect("customer.jsp");  // Redirect to the welcome page for customers
             }
@@ -154,15 +157,20 @@ public class Controller extends HttpServlet {
     // Display the products page
     private void handleProductsPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Product> products = productService.getAllProducts();
-        request.setAttribute("products", products);
+        List<ProductDTO> productDTOs = products.stream()
+                .map(Product::toDTO)
+                .collect(Collectors.toList());
+        request.setAttribute("products", productDTOs);
         request.getRequestDispatcher("products.jsp").forward(request, response);
     }
 
     // Handle displaying the shopping cart
     private void handleCartPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        User loggedInUser = (User) session.getAttribute("loggedInUser");
-        List<Product> cartItems = loggedInUser.getCart();
+        UserDTO loggedInUser = (UserDTO) session.getAttribute("loggedInUser");
+        List<ProductDTO> cartItems = loggedInUser.getCart().stream()
+                .map(product -> new ProductDTO(product.getProductId(), product.getProductName(), product.getPrice(), product.getStockQuantity()))
+                .collect(Collectors.toList());
         request.setAttribute("cartItems", cartItems);
         request.getRequestDispatcher("cart.jsp").forward(request, response);
     }
@@ -171,15 +179,20 @@ public class Controller extends HttpServlet {
     private void handleAddToCart(HttpServletRequest request, HttpServletResponse response) throws IOException {
         int productId = Integer.parseInt(request.getParameter("productId"));
         int quantity = Integer.parseInt(request.getParameter("quantity"));
+
         Product product = productService.getProductById(productId);
+
         if (product != null && product.getStockQuantity() >= quantity) {
             product.setStockQuantity(product.getStockQuantity() - quantity);
             productService.updateQuantityById(productId, product.getStockQuantity());
+
             HttpSession session = request.getSession(false);
-            User user = (User) session.getAttribute("loggedInUser");
-            if (user != null) {
+            UserDTO userDTO = (UserDTO) session.getAttribute("loggedInUser");
+
+            if (userDTO != null) {
+                ProductDTO productDTO = Product.toDTO(product);
                 for (int i = 0; i < quantity; i++) {
-                    user.addToCart(product);
+                    userDTO.addToCart(productDTO);
                 }
                 response.sendRedirect("cart");
             } else {
@@ -192,24 +205,25 @@ public class Controller extends HttpServlet {
 
     private void handleRemoveFromCart(HttpServletRequest request, HttpServletResponse response) throws IOException {
         int productId = Integer.parseInt(request.getParameter("productId"));
-
         HttpSession session = request.getSession(false);
-        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        UserDTO loggedInUser = (UserDTO) session.getAttribute("loggedInUser");
         if (loggedInUser != null) {
-            List<Product> cart = loggedInUser.getCart();
-
-            // Find the product to remove
-            Product productToRemove = null;
-            for (Product product : cart) {
-                if (product.getProductId() == productId) {
-                    productToRemove = product;
+            List<ProductDTO> cart = loggedInUser.getCart();
+            ProductDTO productToRemove = null;
+            for (ProductDTO productDTO : cart) {
+                if (productDTO.getProductId() == productId) {
+                    productToRemove = productDTO;
                     break;
                 }
             }
             if (productToRemove != null) {
                 loggedInUser.removeFromCart(productToRemove);
-                productToRemove.setStockQuantity(productToRemove.getStockQuantity() + 1);
-                productService.updateQuantityById(productId, productToRemove.getStockQuantity());
+                Product productEntity = productService.getProductById(productId);
+                if (productEntity != null) {
+                    ProductDTO dto = Product.toDTO(productEntity);
+                    dto.setStockQuantity(dto.getStockQuantity() + 1);
+                    productService.updateQuantityById(productId, dto.getStockQuantity());
+                }
             }
         }
         response.sendRedirect("products");
@@ -219,30 +233,33 @@ public class Controller extends HttpServlet {
     // Handle checkout
     private void handleCheckout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        User loggedInUser = (User) session.getAttribute("loggedInUser");
-
-        Order success = orderService.addOrder(loggedInUser, new Timestamp(System.currentTimeMillis()));
-
-        if (success != null) {
-            loggedInUser.getCart().clear();  // Clear the cart after successful checkout
+        UserDTO dto = (UserDTO) session.getAttribute("loggedInUser");
+        User user = User.convertToUser(dto);
+        Order order = orderService.addOrder(user, new Timestamp(System.currentTimeMillis()));
+        if (order != null) {
+            OrderDTO orderDTO = Order.toDTO(order);
+            user.getCart().clear(); 
+            request.setAttribute("order", orderDTO);
             request.setAttribute("message", "Order placed successfully!");
         } else {
             request.setAttribute("errorMessage", "Failed to place the order.");
         }
-
         request.getRequestDispatcher("checkout.jsp").forward(request, response);
     }
 
+
     // Handle the admin page (for product management, etc.)
     private void handleAdminPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<Order> allOrders = orderService.getOrders();
-        request.setAttribute("orders", allOrders);
+        List<OrderDTO> orders = orderService.getAllOrders().stream()
+                .map(Order::toDTO)
+                .collect(Collectors.toList());
+        request.setAttribute("orders", orders);
         request.getRequestDispatcher("admin.jsp").forward(request, response);
     }
-
-    // Handle the warehouse page where orders can be viewed and packed by warehouse staff
     private void handleWarehousePage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<Order> orders = orderService.getOrders();  // Retrieve all orders
+        List<OrderDTO> orders = orderService.getAllOrders().stream()
+                .map(Order::toDTO)
+                .collect(Collectors.toList());
         request.setAttribute("orders", orders);
         request.getRequestDispatcher("warehouse.jsp").forward(request, response);
     }
@@ -252,9 +269,9 @@ public class Controller extends HttpServlet {
         int orderId = Integer.parseInt(request.getParameter("orderId"));
         Order order = orderService.getOrderById(orderId);
         if (order != null) {
-            order.setPacked(true);  // Set the order as packed
-            orderService.updateOrder(order);  // Update the order in the database
-            response.sendRedirect("warehouse");  // Refresh the warehouse page
+            order.setPacked(true);
+            orderService.updateOrder(order);
+            response.sendRedirect("warehouse");
         } else {
             response.sendRedirect("warehouse");
         }
