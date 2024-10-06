@@ -67,6 +67,22 @@
         }
 
         /* Button Styles */
+        .action-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-right: 5px;
+        }
+
+        .action-button:hover {
+            background-color: #27ae60;
+        }
+
         .back-button {
             display: inline-block;
             padding: 12px 25px;
@@ -103,6 +119,8 @@
             <th>User ID</th>
             <th>Total Price</th>
             <th>Order Date</th>
+            <th>Status</th>
+            <th>Actions</th>
         </tr>
         <%
             for (OrderDTO order : orders) {
@@ -112,6 +130,19 @@
             <td><%= order.getUserId() %></td>
             <td>$<%= order.getTotalPrice() %></td>
             <td><%= order.getOrderDate() %></td>
+            <td><%= order.isPacked() ? "Packed" : "Pending" %></td>
+            <td>
+                <% if (!order.isPacked()) { %>
+                <form action="packOrder" method="post" style="display:inline;">
+                    <input type="hidden" name="orderId" value="<%= order.getOrderId() %>">
+                    <button type="submit" class="action-button">Pack Order</button>
+                </form>
+                <% } %>
+                <form action="cancelOrder" method="post" style="display:inline;">
+                    <input type="hidden" name="orderId" value="<%= order.getOrderId() %>">
+                    <button type="submit" class="action-button">Cancel Order</button>
+                </form>
+            </td>
         </tr>
         <%
             }

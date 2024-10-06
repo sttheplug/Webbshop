@@ -22,7 +22,12 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@WebServlet({"/login", "/logout", "/products", "/cart", "/add-to-cart", "/checkout", "/admin", "/warehouse", "/pack-order", "/remove-from-cart"})
+@WebServlet({
+        "/login", "/logout", "/products", "/cart", "/add-to-cart", "/checkout", "/admin",
+        "/warehouse", "/pack-order", "/remove-from-cart", "/adminOrders", "/adminProducts",
+        "/adminUsers", "/add-product", "/edit-product", "/delete-product",
+        "/add-user", "/edit-user", "/delete-user"
+})
 public class Controller extends HttpServlet {
     private UserService userService;
     private ProductService productService;
@@ -40,52 +45,50 @@ public class Controller extends HttpServlet {
         String path = request.getServletPath();
         HttpSession session = request.getSession(false);
         UserDTO loggedInUser = session != null ? (UserDTO) session.getAttribute("loggedInUser") : null;
-        System.out.println("Logged in user role: " + (loggedInUser != null ? loggedInUser.getRole() : "No user"));
 
         switch (path) {
             case "/login":
                 request.getRequestDispatcher("login.jsp").forward(request, response);
                 break;
             case "/products":
-                if (loggedInUser != null) {
-                    handleProductsPage(request, response);
-                } else {
-                    response.sendRedirect("login.jsp");
-                }
+                handleProductsPage(request, response);
                 break;
             case "/cart":
-                if (loggedInUser != null) {
-                    handleCartPage(request, response);
-                } else {
-                    response.sendRedirect("login.jsp");
-                }
+                handleCartPage(request, response);
                 break;
             case "/checkout":
-                if (loggedInUser != null) {
-                    handleCheckout(request, response);
-                } else {
-                    response.sendRedirect("login.jsp");
-                }
+                handleCheckout(request, response);
                 break;
             case "/logout":
-                if (session != null) {
-                    session.invalidate();
-                }
-                response.sendRedirect("login.jsp");
+                handleLogout(request, response);
                 break;
-            case "/admin":
-                if (loggedInUser != null && loggedInUser.getRole() == User.Role.admin) {
-                    handleAdminPage(request, response);
-                } else {
+            case "/adminOrders":
+                if (loggedInUser == null || !loggedInUser.getRole().equals(User.Role.admin)) {
                     response.sendRedirect("login.jsp");
+                    return;
                 }
+                handleAdminOrdersPage(request, response);
+                break;
+            case "/adminProducts":
+                if (loggedInUser == null || !loggedInUser.getRole().equals(User.Role.admin)) {
+                    response.sendRedirect("login.jsp");
+                    return;
+                }
+                handleAdminProductsPage(request, response);
+                break;
+            case "/adminUsers":
+                if (loggedInUser == null || !loggedInUser.getRole().equals(User.Role.admin)) {
+                    response.sendRedirect("login.jsp");
+                    return;
+                }
+                handleAdminUsersPage(request, response);
                 break;
             case "/warehouse":
-                if (loggedInUser != null && loggedInUser.getRole() == User.Role.warehouse_staff) {
-                    handleWarehousePage(request, response);
-                } else {
+                if (loggedInUser == null || !loggedInUser.getRole().equals(User.Role.warehouse_staff)) {
                     response.sendRedirect("login.jsp");
+                    return;
                 }
+                handleWarehousePage(request, response);
                 break;
             default:
                 response.sendRedirect("login.jsp");
@@ -109,12 +112,110 @@ public class Controller extends HttpServlet {
             case "/pack-order":
                 handlePackOrder(request, response);
                 break;
-            case "/logout":
-                handleLogout(request, response);
+            case "/add-product":
+                handleAddProduct(request, response);
+                break;
+            case "/edit-product":
+                handleEditProduct(request, response);
+                break;
+            case "/delete-product":
+                handleDeleteProduct(request, response);
+                break;
+            case "/add-user":
+                handleAddUser(request, response);
+                break;
+            case "/edit-user":
+                handleEditUser(request, response);
+                break;
+            case "/delete-user":
+                handleDeleteUser(request, response);
                 break;
             default:
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
+    }
+
+    // Handle Admin Orders Page
+    private void handleAdminOrdersPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        List<Order> orderList = orderService.getAllOrders();
+        List<OrderDTO> orders = orderList.stream()
+                .map(Order::toDTO)
+                .collect(Collectors.toList());
+        request.setAttribute("orders", orders);
+        request.getRequestDispatcher("admin-order.jsp").forward(request, response);
+    }
+
+    // Handle Admin Products Page
+    private void handleAdminProductsPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        List<Product> products = productService.getAllProducts();
+        List<ProductDTO> productDTOs = products.stream()
+                .map(Product::toDTO)
+                .collect(Collectors.toList());
+        request.setAttribute("products", productDTOs);
+        request.getRequestDispatcher("admin-products.jsp").forward(request, response);
+    }
+
+    // Handle Admin Users Page
+    private void handleAdminUsersPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        List<User> users = userService.getAllUsers();
+        List<UserDTO> userDTOs = users.stream()
+                .map(User::toDTO)
+                .collect(Collectors.toList());
+        request.setAttribute("users", userDTOs);
+        request.getRequestDispatcher("admin-users.jsp").forward(request, response);
+    }
+
+    // Handle Add Product
+    private void handleAddProduct(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String productName = request.getParameter("productName");
+        int price = Integer.parseInt(request.getParameter("price"));
+        int stockQuantity = Integer.parseInt(request.getParameter("stockQuantity"));
+        productService.addProduct(productName, price,stockQuantity);
+        response.sendRedirect("adminProducts");
+    }
+
+    // Handle Edit Product
+    private void handleEditProduct(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int productId = Integer.parseInt(request.getParameter("productId"));
+        int price = Integer.parseInt(request.getParameter("price"));
+        int stockQuantity = Integer.parseInt(request.getParameter("stockQuantity"));
+        Product product = productService.getProductById(productId);
+        if (product != null) {
+            productService.updatePriceById(productId,price);
+            productService.updateQuantityById(productId,stockQuantity);
+        }
+        response.sendRedirect("adminProducts");
+    }
+
+    // Handle Delete Product
+    private void handleDeleteProduct(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int productId = Integer.parseInt(request.getParameter("productId"));
+        productService.deleteProduct(productId);
+        response.sendRedirect("adminProducts");
+    }
+
+    // Handle Add User
+    private void handleAddUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        String role = request.getParameter("role");
+        userService.registerUser(username,password, User.Role.valueOf(role));
+        response.sendRedirect("adminUsers");
+    }
+
+    private void handleEditUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int userId = Integer.parseInt(request.getParameter("userId"));
+        String username = request.getParameter("username");
+        String role = request.getParameter("role");
+        userService.updateUserNameById(userId, username);
+        userService.updateRoleById(userId, User.Role.valueOf(role));
+        response.sendRedirect("adminUsers");
+    }
+
+    private void handleDeleteUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int userId = Integer.parseInt(request.getParameter("userId"));
+        userService.deleteUserById(userId);
+        response.sendRedirect("adminUsers");
     }
 
     private void handleLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -127,10 +228,10 @@ public class Controller extends HttpServlet {
             session.setAttribute("loggedInUser", userDTO);
             switch (user.getRole()) {
                 case admin:
-                    response.sendRedirect("admin");
+                    response.sendRedirect("admin_staff.jsp");
                     break;
                 case warehouse_staff:
-                    response.sendRedirect("warehouse");
+                    response.sendRedirect("warehouse_staff.jsp");
                     break;
                 default:
                     response.sendRedirect("customer.jsp");
@@ -232,7 +333,7 @@ public class Controller extends HttpServlet {
                 .map(Order::toDTO)
                 .collect(Collectors.toList());
         request.setAttribute("orders", orders);
-        request.getRequestDispatcher("admin.jsp").forward(request, response);
+        request.getRequestDispatcher("admin-order.jsp").forward(request, response);
     }
 
     private void handleWarehousePage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

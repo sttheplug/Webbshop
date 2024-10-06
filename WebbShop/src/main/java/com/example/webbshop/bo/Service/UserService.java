@@ -79,7 +79,7 @@ public class UserService {
      * @param userName the new username for the user
      * @return true if the update was successful, false otherwise
      */
-    private boolean updateUserNameById(int id, String userName) {
+    public boolean updateUserNameById(int id, String userName) {
         return userDAO.updateUser(
                 new User(id, userName, searchUserById(id).getPassword(), searchUserById(id).getRole())
         );
@@ -92,7 +92,7 @@ public class UserService {
      * @param password the new password for the user
      * @return true if the update was successful, false otherwise
      */
-    private boolean updatePasswordById(int id, String password) {
+    public boolean updatePasswordById(int id, String password) {
         return userDAO.updateUser(
                 new User(id, searchUserById(id).getUsername(), password, searchUserById(id).getRole())
         );
@@ -105,7 +105,7 @@ public class UserService {
      * @param role the new role for the user
      * @return true if the update was successful, false otherwise
      */
-    private boolean updateRoleById(int id, User.Role role) {
+    public boolean updateRoleById(int id, User.Role role) {
         return userDAO.updateUser(
                 new User(id, searchUserById(id).getUsername(), searchUserById(id).getPassword(), role));
     }

@@ -111,7 +111,7 @@ public class OrderDAO {
             preparedStatement.setInt(1, order.getUserId());
             preparedStatement.setInt(2, order.getTotalPrice());
             preparedStatement.setTimestamp(3, order.getOrderDate());
-
+            preparedStatement.setBoolean(4,order.isPacked());
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows > 0) {
                 try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {

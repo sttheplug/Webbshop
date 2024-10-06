@@ -133,7 +133,7 @@
 
 <!-- Logout Button -->
 <div class="logout-container">
-    <form action="logout" method="post">
+    <form action="logout" method="get">
         <input type="submit" value="Logout">
     </form>
 </div>
