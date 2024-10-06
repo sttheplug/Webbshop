@@ -83,6 +83,11 @@ public class OrderService {
     public static void main(String[] args) {
         OrderService orderService = new OrderService();
         List<Order> orders = orderService.getAllOrders();
-        orders.forEach(order -> System.out.println(order));
+        Product product = orders.get(0).getOrderItems().get(0);
+        System.out.println(product.getProductId());
+        System.out.println(product.getProductName());
+        System.out.println(product.getStockQuantity());
+        System.out.println(product.getPrice());
+
     }
 }

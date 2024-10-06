@@ -63,13 +63,13 @@ public class Order {
      * @param orderDate  the date and time the order was placed
      * @param items      the list of products in the order
      */
-    public Order(int orderId, int userId, int totalPrice, Timestamp orderDate, List<Product> items) {
+    public Order(int orderId, int userId, int totalPrice, Timestamp orderDate, List<Product> items, boolean packed) {
         this.orderId = orderId;
         this.userId = userId;
         this.totalPrice = totalPrice;
         this.orderDate = orderDate;
         this.orderItems = (items != null) ? new ArrayList<>(items) : new ArrayList<>();
-        packed = false;
+        this.packed = packed;
     }
 
     /**
@@ -169,6 +169,10 @@ public class Order {
     public List<Product> getOrderItems() {
         return new ArrayList<>(orderItems);
     }
+    public void addToOrderItems(Product p) {
+        orderItems.add(p);
+    }
+
 
     /**
      * Gets whether the order has been packed.
@@ -202,7 +206,7 @@ public class Order {
             newDTOList.add(new ProductDTO(product.getProductId(), product.getProductName(), product.getPrice(), product.getStockQuantity()));
         }
         return new OrderDTO(order.getOrderId(), order.getUserId(), order.getTotalPrice(),
-                order.getOrderDate(), newDTOList);
+                order.getOrderDate(), newDTOList, order.packed);
     }
 
     public static void main(String[] args) {

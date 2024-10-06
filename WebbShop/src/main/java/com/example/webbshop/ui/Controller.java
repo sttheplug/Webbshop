@@ -22,7 +22,6 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// Servlet mapped to multiple URL patterns
 @WebServlet({"/login", "/logout", "/products", "/cart", "/add-to-cart", "/checkout", "/admin", "/warehouse", "/pack-order", "/remove-from-cart"})
 public class Controller extends HttpServlet {
     private UserService userService;
@@ -41,6 +40,7 @@ public class Controller extends HttpServlet {
         String path = request.getServletPath();
         HttpSession session = request.getSession(false);
         UserDTO loggedInUser = session != null ? (UserDTO) session.getAttribute("loggedInUser") : null;
+        System.out.println("Logged in user role: " + (loggedInUser != null ? loggedInUser.getRole() : "No user"));
 
         switch (path) {
             case "/login":
@@ -127,10 +127,10 @@ public class Controller extends HttpServlet {
             session.setAttribute("loggedInUser", userDTO);
             switch (user.getRole()) {
                 case admin:
-                    response.sendRedirect("admin.jsp");
+                    response.sendRedirect("admin");
                     break;
                 case warehouse_staff:
-                    response.sendRedirect("warehouse.jsp");
+                    response.sendRedirect("warehouse");
                     break;
                 default:
                     response.sendRedirect("customer.jsp");
@@ -242,7 +242,7 @@ public class Controller extends HttpServlet {
                 .collect(Collectors.toList());
 
         request.setAttribute("orders", orders);
-        request.getRequestDispatcher("admin.jsp").forward(request, response);
+        request.getRequestDispatcher("warehouse.jsp").forward(request, response);
     }
 
     private void handlePackOrder(HttpServletRequest request, HttpServletResponse response) throws IOException {

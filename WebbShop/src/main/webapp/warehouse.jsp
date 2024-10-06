@@ -8,17 +8,42 @@
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f4f4f9;
-            padding: 30px;
+            margin: 0;
+            padding: 0;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            flex-direction: column;
             min-height: 100vh;
         }
 
+        header {
+            background-color: #2d3436;
+            color: white;
+            padding: 10px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logout-button {
+            background-color: #e17055;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .logout-button:hover {
+            background-color: #d35400;
+        }
+
         .container {
+            flex: 1;
             width: 80%;
             max-width: 1200px;
             background-color: #fff;
+            margin: 20px auto;
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
@@ -33,6 +58,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 20px;
         }
 
         th, td {
@@ -44,6 +70,10 @@
         th {
             background-color: #00b894;
             color: #fff;
+        }
+
+        tr {
+            transition: background-color 0.3s;
         }
 
         tr:hover {
@@ -67,9 +97,31 @@
         input[type="submit"]:hover {
             background-color: #065db7;
         }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+            }
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .logout-button {
+                width: 100%;
+                margin-top: 10px;
+            }
+        }
     </style>
 </head>
 <body>
+<header>
+    <h1>Warehouse Management</h1>
+    <form action="logout" method="post">
+        <input type="submit" class="logout-button" value="Logout">
+    </form>
+</header>
 <div class="container">
     <h2>Warehouse Orders</h2>
 

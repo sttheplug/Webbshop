@@ -6,7 +6,9 @@ import com.example.webbshop.db.DatabaseConnectionManager;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Data Access Object (DAO) for managing orders in the database.
@@ -15,14 +17,15 @@ import java.util.List;
 public class OrderDAO {
     private static final String SELECT_ORDER_BY_ID = "SELECT * FROM orders WHERE order_id = ?";
     private static final String SELECT_ALL_ORDERS = "SELECT * FROM orders";
-    private static final String INSERT_ORDER_SQL = "INSERT INTO orders (user_id, total_price, order_date) VALUES (?, ?, ?)";
-    private static final String INSERT_ORDER_ITEM_SQL = "INSERT INTO order_items (order_id, product_id, quantity) VALUES (?, ?, ?)";
+    private static final String INSERT_ORDER_SQL = "INSERT INTO orders (user_id, total_price, order_date, packed) VALUES (?, ?, ?, ?)";
+    private static final String INSERT_ORDER_ITEM_SQL = "INSERT INTO orderitems (order_id, product_id, quantity) VALUES (?, ?, ?)";
     private static final String UPDATE_ORDER_SQL = "UPDATE orders SET packed = ? WHERE order_id = ?";
     private static final String SELECT_ORDER_ITEMS_BY_ORDER_ID =
-            "SELECT p.product_id, p.product_name, p.price, oi.quantity, p.created_at " +
-                    "FROM order_items oi " +
-                    "JOIN products p ON oi.product_id = p.product_id " +
-                    "WHERE oi.order_id = ?";
+            "SELECT o.order_id, o.user_id, o.total_price, o.order_date, " +
+                    "oi.product_id, p.product_name, p.price, oi.quantity " +
+                    "FROM orders o " +
+                    "JOIN order_items oi ON o.order_id = oi.order_id " +
+                    "JOIN products p ON oi.product_id = p.product_id";
 
     /**
      * Retrieves an order by its ID.
@@ -43,12 +46,10 @@ public class OrderDAO {
                 int userId = rs.getInt("user_id");
                 int totalPrice = rs.getInt("total_price");
                 Timestamp orderDate = rs.getTimestamp("order_date");
-
-                // Retrieve order items for this order
                 List<Product> orderItems = getOrderItemsByOrderId(orderId);
+                boolean packed = rs.getBoolean("packed");
 
-                // Create Order object
-                order = new Order(orderId, userId, totalPrice, orderDate, orderItems);
+                order = new Order(orderId, userId, totalPrice, orderDate, orderItems,packed);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -63,22 +64,36 @@ public class OrderDAO {
      */
     public List<Order> getAllOrders() {
         List<Order> orders = new ArrayList<>();
+        String sql = "SELECT o.order_id, o.user_id, o.total_price, o.order_date, o.packed, " + // Add packed column here
+                "oi.product_id, p.product_name, p.price, oi.quantity " +
+                "FROM orders o " +
+                "JOIN orderitems oi ON o.order_id = oi.order_id " +
+                "JOIN products p ON oi.product_id = p.product_id";
         try (Connection connection = DatabaseConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_ORDERS)) {
-
-            ResultSet rs = preparedStatement.executeQuery(SELECT_ALL_ORDERS);
-
-            while (rs.next()) {
-                int orderId = rs.getInt("order_id");
-                int userId = rs.getInt("user_id");
-                int totalPrice = rs.getInt("total_price");
-                Timestamp orderDate = rs.getTimestamp("order_date");
-                List<Product> orderItems = getOrderItemsByOrderId(orderId);
-                Order order = new Order(orderId, userId, totalPrice, orderDate, orderItems);
-                orders.add(order);
+             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            Map<Integer, Order> orderMap = new HashMap<>();
+            while (resultSet.next()) {
+                int orderId = resultSet.getInt("order_id");
+                int userId = resultSet.getInt("user_id");
+                int totalPrice = resultSet.getInt("total_price");
+                Timestamp orderDate = resultSet.getTimestamp("order_date");
+                boolean packed = resultSet.getBoolean("packed");
+                Order order = orderMap.get(orderId);
+                if (order == null) {
+                    order = new Order(orderId, userId, totalPrice, orderDate, new ArrayList<>(),packed);
+                    orderMap.put(orderId, order);
+                }
+                int productId = resultSet.getInt("product_id");
+                String productName = resultSet.getString("product_name");
+                int price = resultSet.getInt("price");
+                int quantity = resultSet.getInt("quantity");
+                Product product = new Product(productId, productName, price, quantity, new Timestamp(System.currentTimeMillis()));
+                order.addToOrderItems(product);
             }
+            orders.addAll(orderMap.values());
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return orders;
     }

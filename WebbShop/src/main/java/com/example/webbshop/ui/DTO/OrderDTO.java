@@ -32,13 +32,13 @@ public class OrderDTO {
      * @param orderDate   the date the order was placed
      * @param orderItems  the list of products in the order
      */
-    public OrderDTO(int orderId, int userId, int totalPrice, Timestamp orderDate, List<ProductDTO> orderItems) {
+    public OrderDTO(int orderId, int userId, int totalPrice, Timestamp orderDate, List<ProductDTO> orderItems, boolean packed) {
         this.orderId = orderId;
         this.userId = userId;
         this.totalPrice = totalPrice;
         this.orderDate = orderDate;
         this.orderItems = orderItems;
-        this.packed = false;
+        this.packed = packed;
     }
 
     /**
@@ -138,5 +138,9 @@ public class OrderDTO {
      */
     public boolean isPacked() {
         return packed;
+    }
+
+    public void setPacked(boolean packed) {
+        this.packed = packed;
     }
 }
