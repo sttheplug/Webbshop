@@ -83,11 +83,14 @@
         </tr>
 
         <%
-            List<OrderDTO> orders = (List<OrderDTO>) request.getAttribute("orders"); // Changed to OrderDTO
-            for (OrderDTO order : orders) { // Changed to OrderDTO
+            List<OrderDTO> orders = (List<OrderDTO>) request.getAttribute("orders"); // Retrieve orders
+            if (orders != null && !orders.isEmpty()) { // Check if orders is not null or empty
+                for (OrderDTO order : orders) { // Iterate over the orders
         %>
         <tr>
             <td><%= order.getOrderId() %></td>
+            <td><%= order.getUserId() %></td> <!-- Assuming user ID is what you want to display -->
+            <td><%= order.getOrderDate() %></td>
             <td><%= order.isPacked() ? "Packed" : "Pending" %></td>
             <td>
                 <% if (!order.isPacked()) { %>
@@ -99,6 +102,13 @@
                 Packed
                 <% } %>
             </td>
+        </tr>
+        <%
+            } // End of orders loop
+        } else {
+        %>
+        <tr>
+            <td colspan="5" style="text-align:center;">No orders found.</td> <!-- Display message if no orders -->
         </tr>
         <%
             }

@@ -5,13 +5,21 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Manages the database connection for the application.
+ * Provides methods to create, close, and test database connections.
+ */
 public class DatabaseConnectionManager {
-    // Step 1: Define the database URL, username, and password
     private static final String URL = "jdbc:mysql://localhost:3306/webshop";
     private static final String USER = "root";
     private static final String PASSWORD = "Aprilapril23.";
 
-    // Step 2: Method to create and return a new database connection
+    /**
+     * Creates and returns a new database connection.
+     *
+     * @return a Connection object to the database
+     * @throws SQLException if a database access error occurs
+     */
     public static Connection getConnection() throws SQLException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -22,7 +30,11 @@ public class DatabaseConnectionManager {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
-    // Optional: Method to close the database connection
+    /**
+     * Closes the provided database connection.
+     *
+     * @param connection the Connection object to be closed
+     */
     public static void closeConnection(Connection connection) {
         if (connection != null) {
             try {
@@ -33,10 +45,14 @@ public class DatabaseConnectionManager {
         }
     }
 
+    /**
+     * Tests the database connection by executing a simple query.
+     *
+     * @return true if the connection is successful, false otherwise
+     */
     public static boolean testConnection() {
         try (Connection connection = getConnection();
              Statement stmt = connection.createStatement()) {
-            // Run a simple query to check if the connection is valid
             stmt.execute("SELECT 1");
             System.out.println("Database connection successful!");
             return true;

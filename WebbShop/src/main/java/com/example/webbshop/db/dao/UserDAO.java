@@ -7,6 +7,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data Access Object (DAO) for managing users in the database.
+ * Provides methods to create, read, update, and delete user records.
+ */
 public class UserDAO {
     private static final String INSERT_USER_SQL = "INSERT INTO user (username, Password, role) VALUES (?, ?, ?)";
     private static final String SELECT_USER_BY_ID = "SELECT * FROM user WHERE user_id = ?";
@@ -15,6 +19,12 @@ public class UserDAO {
     private static final String DELETE_USER = "DELETE FROM user WHERE user_id = ?";
     private static final String SELECT_USER_BY_NAME_PASS = "SELECT * FROM user WHERE username = ? AND password = ?";
 
+    /**
+     * Adds a new user to the database.
+     *
+     * @param user the User object to be added
+     * @return the added User object with its generated ID, or null if insertion failed
+     */
     public User addUser(User user) {
         try (Connection connection = DatabaseConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER_SQL, Statement.RETURN_GENERATED_KEYS)) {
@@ -23,7 +33,6 @@ public class UserDAO {
             preparedStatement.setString(2, user.getPassword());
             preparedStatement.setString(3, user.getRole().name());
 
-            // Execute update and retrieve the generated keys
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows > 0) {
                 try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
@@ -39,6 +48,13 @@ public class UserDAO {
         return null;
     }
 
+    /**
+     * Retrieves a user from the database using their username and password.
+     *
+     * @param username the username of the user
+     * @param password the password of the user
+     * @return the User object if found, or null if not found
+     */
     public User getUserByUsernameAndPassword(String username, String password) {
         User user = null;
         try (Connection connection = DatabaseConnectionManager.getConnection();
@@ -53,7 +69,7 @@ public class UserDAO {
                         rs.getInt("user_id"),
                         rs.getString("username"),
                         rs.getString("Password"),
-                        User.Role.valueOf(rs.getString("role")) // Convert String to Enum
+                        User.Role.valueOf(rs.getString("role"))
                 );
             }
         } catch (SQLException e) {
@@ -61,7 +77,13 @@ public class UserDAO {
         }
         return user;
     }
-    // Method to get a user by ID
+
+    /**
+     * Retrieves a user from the database by their ID.
+     *
+     * @param id the ID of the user to be retrieved
+     * @return the User object if found, or null if not found
+     */
     public User getUserById(int id) {
         User user = null;
         try (Connection connection = DatabaseConnectionManager.getConnection();
@@ -75,7 +97,7 @@ public class UserDAO {
                         rs.getInt("user_id"),
                         rs.getString("username"),
                         rs.getString("password"),
-                        User.Role.valueOf(rs.getString("role")) // Convert String to Enum
+                        User.Role.valueOf(rs.getString("role"))
                 );
             }
         } catch (SQLException e) {
@@ -84,7 +106,11 @@ public class UserDAO {
         return user;
     }
 
-    // Method to get all users
+    /**
+     * Retrieves all users from the database.
+     *
+     * @return a list of User objects, or an empty list if no users are found
+     */
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         try (Connection connection = DatabaseConnectionManager.getConnection();
@@ -97,7 +123,7 @@ public class UserDAO {
                         rs.getInt("user_id"),
                         rs.getString("username"),
                         rs.getString("password"),
-                        User.Role.valueOf(rs.getString("role")) // Convert String to Enum
+                        User.Role.valueOf(rs.getString("role"))
                 );
                 users.add(user);
             }
@@ -107,7 +133,12 @@ public class UserDAO {
         return users;
     }
 
-    // Method to update an existing user
+    /**
+     * Updates an existing user in the database.
+     *
+     * @param user the User object containing updated information
+     * @return true if the update was successful, false otherwise
+     */
     public boolean updateUser(User user) {
         boolean rowUpdated = false;
         try (Connection connection = DatabaseConnectionManager.getConnection();
@@ -124,7 +155,12 @@ public class UserDAO {
         return rowUpdated;
     }
 
-    // Method to delete a user by ID
+    /**
+     * Deletes a user from the database by their ID.
+     *
+     * @param id the ID of the user to be deleted
+     * @return true if the user was deleted, false otherwise
+     */
     public boolean deleteUser(int id) {
         boolean rowDeleted = false;
         try (Connection connection = DatabaseConnectionManager.getConnection();
