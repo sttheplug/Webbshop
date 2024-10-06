@@ -82,7 +82,6 @@ public class Order {
         for(Product product : order.getOrderItems()) {
             newDTOList.add(new ProductDTO(product.getProductId(), product.getProductName(), product.getPrice(), product.getStockQuantity()));
         }
-        return new OrderDTO(order.getOrderId(), order.getUserId(), order.getTotalPrice(),
-                order.getOrderDate(), newDTOList);
+        return new OrderDTO(order.getOrderId(), order.getTotalPrice(), newDTOList);
     }
 }

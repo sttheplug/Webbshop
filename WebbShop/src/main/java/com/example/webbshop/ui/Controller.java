@@ -125,6 +125,10 @@ public class Controller extends HttpServlet {
                 handlePackOrder(request, response);
                 break;
 
+            case "/logout":
+                handleLogout(request, response);
+                break;
+
             default:
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
@@ -275,5 +279,12 @@ public class Controller extends HttpServlet {
         } else {
             response.sendRedirect("warehouse");
         }
+    }
+    private void handleLogout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(false); // Don't create a new session if one doesn't exist
+        if (session != null) {
+            session.invalidate();  // Invalidate the current session to log out the user
+        }
+        response.sendRedirect("login.jsp");  // Redirect to the login page after logout
     }
 }

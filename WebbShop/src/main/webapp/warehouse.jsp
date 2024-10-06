@@ -88,8 +88,6 @@
         %>
         <tr>
             <td><%= order.getOrderId() %></td>
-            <td><%= order.getUserId() %></td>
-            <td><%= order.getOrderDate() %></td>
             <td><%= order.isPacked() ? "Packed" : "Pending" %></td>
             <td>
                 <% if (!order.isPacked()) { %>

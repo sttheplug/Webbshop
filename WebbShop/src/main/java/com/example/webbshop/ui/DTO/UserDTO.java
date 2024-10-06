@@ -9,23 +9,20 @@ import java.util.List;
 public class UserDTO {
     private int userId;
     private String username;
-    private String password;
     private User.Role role;
     private List<ProductDTO> cart;
 
     // Constructor with parameters
-    public UserDTO(int userId, String username, String password, User.Role role, List<ProductDTO> cart) {
+    public UserDTO(int userId, String username, User.Role role, List<ProductDTO> cart) {
         this.userId = userId;
         this.username = username;
-        this.password = password;
         this.role = role;
         this.cart = cart;
     }
 
-    public UserDTO(int userId, String username, String password, User.Role role) {
+    public UserDTO(int userId, String username, User.Role role) {
         this.userId = userId;
         this.username = username;
-        this.password = password;
         this.role = role;
         this.cart = new ArrayList<>();
     }
@@ -53,13 +50,6 @@ public class UserDTO {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public User.Role getRole() {

@@ -11,7 +11,7 @@
             margin: 0;
             padding: 20px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             min-height: 100vh;
             background: linear-gradient(135deg, #74b9ff, #a29bfe);
@@ -24,6 +24,7 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
             width: 80%;
             max-width: 1200px;
+            margin-top: 20px;
         }
 
         h2 {
@@ -98,9 +99,44 @@
         a:hover {
             background-color: #4a9ff3;
         }
+
+        /* Logout Button Styling */
+        .logout-container {
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .logout-container form {
+            display: inline;
+        }
+
+        .logout-container input[type="submit"] {
+            background-color: #ff7675;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .logout-container input[type="submit"]:hover {
+            background-color: #d63031;
+        }
+
     </style>
 </head>
 <body>
+
+<!-- Logout Button -->
+<div class="logout-container">
+    <form action="logout" method="post">
+        <input type="submit" value="Logout">
+    </form>
+</div>
 
 <div class="products-container">
     <h2>Available Products</h2>

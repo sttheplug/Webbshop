@@ -96,10 +96,10 @@ public class User {
 
     public static UserDTO toDTO(User user) {
         List<ProductDTO> cartDTOs = user.getCart().stream()
-                .map(Product::toDTO)  // Use the toDTO method to convert each Product to ProductDTO
-                .collect(Collectors.toList());  // Collect the result as a List<ProductDTO>
+                .map(Product::toDTO)
+                .collect(Collectors.toList());
 
-        return new UserDTO(user.getUserID(), user.getUsername(), user.getPassword(), user.getRole(), cartDTOs);
+        return new UserDTO(user.getUserID(), user.getUsername(), user.getRole(), cartDTOs);
     }
     public static User convertToUser(UserDTO userDTO) {
         if (userDTO == null) {
@@ -108,7 +108,6 @@ public class User {
         User user = new User();
         user.setUserID(userDTO.getUserId());
         user.setUsername(userDTO.getUsername());
-        user.setPassword(userDTO.getPassword()); // Assuming User has an email field
         user.setRole(userDTO.getRole());
         if (userDTO.getCart() != null) {
             List<Product> cartItems = userDTO.getCart().stream()
