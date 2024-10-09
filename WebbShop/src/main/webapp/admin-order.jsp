@@ -133,12 +133,12 @@
             <td><%= order.isPacked() ? "Packed" : "Pending" %></td>
             <td>
                 <% if (!order.isPacked()) { %>
-                <form action="packOrder" method="post" style="display:inline;">
+                <form action="pack-order" method="post" style="display:inline;">
                     <input type="hidden" name="orderId" value="<%= order.getOrderId() %>">
                     <button type="submit" class="action-button">Pack Order</button>
                 </form>
                 <% } %>
-                <form action="cancelOrder" method="post" style="display:inline;">
+                <form action="delete-order" method="post" style="display:inline;">
                     <input type="hidden" name="orderId" value="<%= order.getOrderId() %>">
                     <button type="submit" class="action-button">Cancel Order</button>
                 </form>

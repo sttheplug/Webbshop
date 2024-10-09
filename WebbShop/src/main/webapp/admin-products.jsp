@@ -1,175 +1,224 @@
-<%@ page import="com.example.webbshop.ui.DTO.ProductDTO" %>
 <%@ page import="java.util.List" %>
+<%@ page import="com.example.webbshop.ui.DTO.ProductDTO" %>
 <html>
 <head>
     <title>Admin - Manage Products</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f4f7;
+            background-color: #f4f4f9;
             margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            padding: 20px;
         }
-        .container {
-            max-width: 1000px;
-            width: 100%;
-            background-color: #fff;
-            padding: 30px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
+
         h1 {
             text-align: center;
-            color: #333;
-            margin-bottom: 20px;
+            color: #2d3436;
+            margin-bottom: 30px;
         }
+
+        h2 {
+            margin-top: 40px;
+            color: #2d3436;
+        }
+
+        /* Container for the product management section */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        /* Form styles */
+        form {
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            max-width: 400px;
+        }
+
+        label {
+            margin: 5px 0;
+            color: #636e72;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        input[type="submit"] {
+            background-color: #00b894;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #00966e;
+        }
+
+        /* Table styles */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 30px;
-        }
-        table th, table td {
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            text-align: center;
-        }
-        table th {
-            background-color: #3498db;
-            color: white;
-        }
-        table td {
-            background-color: #f9f9f9;
-        }
-        form {
-            display: inline-block;
-        }
-        .action-buttons form {
-            margin-right: 10px;
-        }
-        .action-buttons {
-            display: flex;
-            justify-content: center;
-        }
-        input[type="submit"] {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        input[type="submit"]:hover {
-            background-color: #2980b9;
-        }
-        input[type="text"], input[type="number"] {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .add-product-form {
-            margin-top: 20px;
-            padding: 20px;
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        .add-product-form h2 {
-            margin-bottom: 15px;
-            color: #333;
-        }
-        input[type="submit"].add-btn {
-            width: 100%;
-            background-color: #27ae60;
-            margin-top: 10px;
-        }
-        input[type="submit"].add-btn:hover {
-            background-color: #2ecc71;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* Styling for the back button */
-        .back-button {
-            display: inline-block;
-            margin: 20px auto;
-            padding: 10px 15px;
-            background-color: #dfe6e9; /* Light gray color */
-            color: #2d3436;
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #00b894;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Delete button styles */
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 8px 12px;
             border: none;
             border-radius: 5px;
-            text-align: center;
-            text-decoration: none; /* Remove underline */
+            cursor: pointer;
             transition: background-color 0.3s;
         }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+
+        /* Edit button styles */
+        .edit-btn {
+            background-color: #ffc107; /* Yellow background for edit button */
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-right: 5px; /* Space between buttons */
+        }
+
+        .edit-btn:hover {
+            background-color: #e0a800; /* Darker yellow on hover */
+        }
+
+        /* Back button styles */
+        .back-button {
+            background-color: #dfe6e9;
+            color: #2d3436;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            display: inline-block;
+            margin: 20px auto;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
         .back-button:hover {
-            background-color: #b2bec3; /* Darker gray on hover */
+            background-color: #b2bec3;
+        }
+
+        /* No products message */
+        .no-products {
+            text-align: center;
+            color: #636e72;
         }
     </style>
 </head>
 <body>
 <div class="container">
     <h1>Manage Products</h1>
+
     <%
-        List<ProductDTO> products = (List<ProductDTO>) request.getAttribute("products");
-        if (products != null && !products.isEmpty()) {
+        String errorMessage = (String) request.getAttribute("errorMessage");
+        if (errorMessage != null) {
     %>
+    <p style="color: red; text-align: center;"><%= errorMessage %></p>
+    <% } %>
+
+    <h2>Add New Product</h2>
+    <form action="add-product" method="post">
+        <label for="productName">Product Name:</label>
+        <input type="text" name="productName" id="productName" required>
+
+        <label for="price">Price:</label>
+        <input type="number" name="price" id="price" required>
+
+        <label for="stockQuantity">Stock Quantity:</label>
+        <input type="number" name="stockQuantity" id="stockQuantity" required>
+
+        <label for="categoryName">Category Name:</label>
+        <input type="text" name="categoryName" id="categoryName" required>
+
+        <input type="submit" value="Add Product">
+    </form>
+
+    <!-- Table to display all products -->
+    <h2>Existing Products</h2>
     <table>
         <tr>
             <th>Product ID</th>
             <th>Product Name</th>
             <th>Price</th>
-            <th>Stock</th>
-            <th>Action</th>
+            <th>Stock Quantity</th>
+            <th>Category Name</th>
+            <th>Actions</th>
         </tr>
         <%
-            for (ProductDTO product : products) {
+            // Fetch the list of products from the request
+            List<ProductDTO> products = (List<ProductDTO>) request.getAttribute("products");
+
+            if (products != null && !products.isEmpty()) {
+                for (ProductDTO product : products) {
         %>
         <tr>
             <td><%= product.getProductId() %></td>
             <td><%= product.getProductName() %></td>
-            <td><%= product.getPrice() %></td>
+            <td>$<%= product.getPrice() %></td>
             <td><%= product.getStockQuantity() %></td>
-            <td class="action-buttons">
-                <form action="edit-product" method="post">
+            <td><%= product.getCategoryName() %></td> <!-- Displaying Category Name -->
+            <td>
+                <form action="edit-product" method="post" style="display:inline;">
                     <input type="hidden" name="productId" value="<%= product.getProductId() %>">
-                    <input type="submit" value="Edit">
+                    <input type="submit" class="edit-btn" value="Edit">
                 </form>
-                <form action="delete-product" method="post">
+                <form action="delete-product" method="post" style="display:inline;">
                     <input type="hidden" name="productId" value="<%= product.getProductId() %>">
-                    <input type="submit" value="Delete" onclick="return confirm('Are you sure you want to delete this product?')">
+                    <input type="submit" class="delete-btn" value="Delete" onclick="return confirm('Are you sure you want to delete this product?')">
                 </form>
             </td>
         </tr>
         <%
             }
+        } else {
         %>
+        <tr>
+            <td colspan="6" class="no-products">No products available.</td>
+        </tr>
+        <% } %>
     </table>
-    <%
-    } else {
-    %>
-    <p>No products found.</p>
-    <%
-        }
-    %>
-
-    <div class="add-product-form">
-        <h2>Add New Product</h2>
-        <form action="add-product" method="post">
-            <label for="productName">Product Name:</label>
-            <input type="text" name="productName" id="productName" required><br>
-            <label for="price">Price:</label>
-            <input type="number" name="price" id="price" required><br>
-            <label for="stockQuantity">Stock Quantity:</label>
-            <input type="number" name="stockQuantity" id="stockQuantity" required><br>
-            <input type="submit" class="add-btn" value="Add Product">
-        </form>
-    </div>
 
     <!-- Back to Admin Dashboard Button -->
     <a href="admin-dashboard.jsp" class="back-button">Back to Dashboard</a>

@@ -20,6 +20,7 @@ public class OrderDAO {
     private static final String INSERT_ORDER_SQL = "INSERT INTO orders (user_id, total_price, order_date, packed) VALUES (?, ?, ?, ?)";
     private static final String INSERT_ORDER_ITEM_SQL = "INSERT INTO orderitems (order_id, product_id, quantity) VALUES (?, ?, ?)";
     private static final String UPDATE_ORDER_SQL = "UPDATE orders SET packed = ? WHERE order_id = ?";
+    private static final String DELETE_ORDER_QUERY = "DELETE FROM orders WHERE order_id = ?";
     private static final String SELECT_ORDER_ITEMS_BY_ORDER_ID =
             "SELECT o.order_id, o.user_id, o.total_price, o.order_date, " +
                     "oi.product_id, p.product_name, p.price, oi.quantity " +
@@ -64,8 +65,8 @@ public class OrderDAO {
      */
     public List<Order> getAllOrders() {
         List<Order> orders = new ArrayList<>();
-        String sql = "SELECT o.order_id, o.user_id, o.total_price, o.order_date, o.packed, " + // Add packed column here
-                "oi.product_id, p.product_name, p.price, oi.quantity " +
+        String sql = "SELECT o.order_id, o.user_id, o.total_price, o.order_date, o.packed, " +
+                "oi.product_id, p.product_name, p.price, p.category_id, oi.quantity " +
                 "FROM orders o " +
                 "JOIN orderitems oi ON o.order_id = oi.order_id " +
                 "JOIN products p ON oi.product_id = p.product_id";
@@ -88,7 +89,8 @@ public class OrderDAO {
                 String productName = resultSet.getString("product_name");
                 int price = resultSet.getInt("price");
                 int quantity = resultSet.getInt("quantity");
-                Product product = new Product(productId, productName, price, quantity, new Timestamp(System.currentTimeMillis()));
+                int categoryId = resultSet.getInt("category_id");
+                Product product = new Product(productId, productName, price, quantity, categoryId, new Timestamp(System.currentTimeMillis()));
                 order.addToOrderItems(product);
             }
             orders.addAll(orderMap.values());
@@ -173,7 +175,8 @@ public class OrderDAO {
                 int price = rs.getInt("price");
                 int quantity = rs.getInt("quantity");
                 Timestamp createdAt = rs.getTimestamp("created_at");
-                Product product = new Product(productId, productName, price, quantity, createdAt);
+                int categoryId = rs.getInt("category_id");
+                Product product = new Product(productId, productName, price, quantity, categoryId, createdAt);
                 orderItems.add(product);
             }
         } catch (SQLException e) {
@@ -200,5 +203,23 @@ public class OrderDAO {
             e.printStackTrace();
         }
         return false;
+    }
+
+    /**
+     * Deletes an order from the database by its ID.
+     *
+     * @param orderId the ID of the order to be deleted
+     * @return true if the order was deleted, false otherwise
+     */
+    public boolean deleteOrder(int orderId) {
+        boolean rowDeleted = false;
+        try (Connection connection = DatabaseConnectionManager.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(DELETE_ORDER_QUERY)) {
+            stmt.setInt(1, orderId);
+            rowDeleted = stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rowDeleted;
     }
 }

@@ -76,18 +76,21 @@ public class OrderService {
     }
 
     /**
-     * Main method for testing the OrderService.
+     * Deletes an order by its ID.
+     * This method handles the business logic related to the deletion of an order, such as checking if the order exists.
      *
-     * @param args command line arguments
+     * @param orderId the ID of the order to be deleted
+     * @return true if the order was successfully deleted, false otherwise
      */
+    public boolean deleteOrder(int orderId) {
+        if (orderDAO.getOrderById(orderId) == null) {
+            return false;
+        }
+        return orderDAO.deleteOrder(orderId);
+    }
+
     public static void main(String[] args) {
         OrderService orderService = new OrderService();
-        List<Order> orders = orderService.getAllOrders();
-        Product product = orders.get(0).getOrderItems().get(0);
-        System.out.println(product.getProductId());
-        System.out.println(product.getProductName());
-        System.out.println(product.getStockQuantity());
-        System.out.println(product.getPrice());
-
+        System.out.println(orderService.getAllOrders().get(0).getOrderId());
     }
 }

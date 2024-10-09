@@ -23,19 +23,19 @@
             background-color: #ffffff;
             border-radius: 10px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            padding: 30px;
+            padding: 40px;
             text-align: center;
         }
 
         h1 {
             font-size: 36px;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             color: #3498db;
             font-weight: 600;
         }
 
         .welcome-message {
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             font-size: 20px;
             color: #636e72;
         }
@@ -44,7 +44,7 @@
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 20px; /* Gap between buttons */
+            gap: 20px;
         }
 
         .dashboard-button {
@@ -71,7 +71,7 @@
             color: white;
             text-decoration: none;
             padding: 12px 25px;
-            margin-top: 20px;
+            margin-top: 40px;
             border-radius: 5px;
             font-size: 16px;
             display: inline-block;
@@ -86,15 +86,19 @@
         }
 
         /* Responsive Design */
-        @media (max-width: 600px) {
-            .dashboard-button, .logout-button {
+        @media (max-width: 768px) {
+            .dashboard-button {
                 width: 100%;
-                padding: 10px;
                 font-size: 16px;
+                padding: 12px;
+            }
+
+            .dashboard-buttons {
+                gap: 15px;
             }
 
             h1 {
-                font-size: 28px;
+                font-size: 32px;
             }
 
             .welcome-message {
@@ -114,6 +118,7 @@
         <a href="adminOrders" class="dashboard-button">Manage Orders</a>
         <a href="adminProducts" class="dashboard-button">Manage Products</a>
         <a href="adminUsers" class="dashboard-button">Manage Users</a>
+        <a href="adminCategories" class="dashboard-button">Manage Categories</a>
     </div>
 
     <a href="logout" class="logout-button">Logout</a>

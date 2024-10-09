@@ -1,12 +1,13 @@
 package com.example.webbshop.bo.model;
 
+import com.example.webbshop.bo.Service.CategoryService;
 import com.example.webbshop.ui.DTO.ProductDTO;
 
 import java.sql.Timestamp;
 
 /**
  * The Product class represents an item available for purchase in the webshop.
- * It holds details about the product's ID, name, price, stock quantity, and when the product was created.
+ * It holds details about the product's ID, name, price, stock quantity, category ID, and when the product was created.
  */
 public class Product {
 
@@ -31,6 +32,11 @@ public class Product {
     private int stockQuantity;
 
     /**
+     * ID of the category this product belongs to.
+     */
+    private int categoryId;
+
+    /**
      * Timestamp representing when the product was added to the system.
      */
     private Timestamp createdAt;
@@ -49,13 +55,15 @@ public class Product {
      * @param productName   the name of the product
      * @param price         the price of the product
      * @param stockQuantity the available stock quantity of the product
+     * @param categoryId    the ID of the category the product belongs to
      * @param createdAt     the timestamp when the product was added
      */
-    public Product(int productId, String productName, int price, int stockQuantity, Timestamp createdAt) {
+    public Product(int productId, String productName, int price, int stockQuantity, int categoryId, Timestamp createdAt) {
         this.productId = productId;
         this.productName = productName;
         this.price = price;
         this.stockQuantity = stockQuantity;
+        this.categoryId = categoryId;
         this.createdAt = createdAt;
     }
 
@@ -65,12 +73,14 @@ public class Product {
      * @param productName   the name of the product
      * @param price         the price of the product
      * @param stockQuantity the available stock quantity of the product
+     * @param categoryId    the ID of the category the product belongs to
      * @param createdAt     the timestamp when the product was added
      */
-    public Product(String productName, int price, int stockQuantity, Timestamp createdAt) {
+    public Product(String productName, int price, int stockQuantity, int categoryId, Timestamp createdAt) {
         this.productName = productName;
         this.price = price;
         this.stockQuantity = stockQuantity;
+        this.categoryId = categoryId;
         this.createdAt = createdAt;
     }
 
@@ -149,6 +159,24 @@ public class Product {
     }
 
     /**
+     * Gets the ID of the category the product belongs to.
+     *
+     * @return the category ID
+     */
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    /**
+     * Sets the ID of the category the product belongs to.
+     *
+     * @param categoryId the category ID
+     */
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    /**
      * Gets the timestamp when the product was added to the system.
      *
      * @return the creation timestamp
@@ -174,11 +202,15 @@ public class Product {
      * @return the converted ProductDTO
      */
     public static ProductDTO toDTO(Product product) {
+        CategoryService categoryService = new CategoryService();
+        Category category = categoryService.getCategoryById(product.getCategoryId());
+        String categoryName = (category == null) ? " " : category.getCategoryName();
         return new ProductDTO(
                 product.getProductId(),
                 product.getProductName(),
                 product.getPrice(),
-                product.getStockQuantity()
+                product.getStockQuantity(),
+                categoryName
         );
     }
 
@@ -189,6 +221,7 @@ public class Product {
      * @return the converted Product object or null if productDTO is null
      */
     public static Product convertToProduct(ProductDTO productDTO) {
+        CategoryService categoryService = new CategoryService();
         if (productDTO == null) {
             return null;
         }
@@ -197,6 +230,9 @@ public class Product {
         product.setProductName(productDTO.getProductName());
         product.setPrice(productDTO.getPrice());
         product.setStockQuantity(productDTO.getStockQuantity());
+        Category category = categoryService.getCategoryByName(productDTO.getCategoryName());
+        int categoryId = (category == null) ? -1 : category.getCategoryId();
+        product.setCategoryId(categoryId);
         return product;
     }
 }

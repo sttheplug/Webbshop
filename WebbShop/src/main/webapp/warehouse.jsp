@@ -118,7 +118,7 @@
 <body>
 <header>
     <h1>Warehouse Management</h1>
-    <form action="logout" method="post">
+    <form action="logout" method="get">
         <input type="submit" class="logout-button" value="Logout">
     </form>
 </header>

@@ -30,8 +30,8 @@ public class ProductService {
      * @param stockQuantity the available quantity of the product in stock
      * @return the added Product object
      */
-    public Product addProduct(String productName, int price, int stockQuantity) {
-        Product product = new Product(productName, price, stockQuantity, null);
+    public boolean addProduct(String productName, int price, int stockQuantity, int categoryId) {
+        Product product = new Product(productName, price, stockQuantity,categoryId, null);
         return productDAO.addProduct(product);
     }
 
@@ -45,7 +45,7 @@ public class ProductService {
     public boolean updatePriceById(int productId, int price) {
         Product product = productDAO.getProductById(productId);
         return productDAO.updateProduct(
-                new Product(productId, product.getProductName(), price, product.getStockQuantity(), product.getCreatedAt())
+                new Product(productId, product.getProductName(), price, product.getStockQuantity(), product.getCategoryId(), product.getCreatedAt())
         );
     }
 
@@ -59,7 +59,7 @@ public class ProductService {
     public boolean updateQuantityById(int productId, int quantity) {
         Product product = productDAO.getProductById(productId);
         return productDAO.updateProduct(
-                new Product(productId, product.getProductName(), product.getPrice(), quantity, product.getCreatedAt())
+                new Product(productId, product.getProductName(), product.getPrice(), quantity,product.getCategoryId(), product.getCreatedAt())
         );
     }
 
@@ -92,13 +92,11 @@ public class ProductService {
         return productDAO.getAllProducts();
     }
 
-    /**
-     * Main method for testing the ProductService.
-     *
-     * @param args command line arguments
-     */
+    public boolean updateProduct(Product product){
+        return productDAO.updateProduct(product);
+    }
     public static void main(String[] args) {
         ProductService productService = new ProductService();
-        productService.updatePriceById(2, 130);
+        productService.deleteProduct(3);
     }
 }

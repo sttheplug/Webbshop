@@ -9,6 +9,7 @@ public class ProductDTO {
     private String productName;
     private int price;
     private int stockQuantity;
+    private String categoryName; // New field
 
     /**
      * Parameterized constructor for creating a ProductDTO instance.
@@ -17,12 +18,14 @@ public class ProductDTO {
      * @param productName    the name of the product
      * @param price          the price of the product
      * @param stockQuantity  the quantity of the product in stock
+     * @param categoryName   the name of the category the product belongs to
      */
-    public ProductDTO(int productId, String productName, int price, int stockQuantity) {
+    public ProductDTO(int productId, String productName, int price, int stockQuantity, String categoryName) {
         this.productId = productId;
         this.productName = productName;
         this.price = price;
         this.stockQuantity = stockQuantity;
+        this.categoryName = categoryName; // Initialize categoryName
     }
 
     /**
@@ -95,5 +98,23 @@ public class ProductDTO {
      */
     public void setStockQuantity(int stockQuantity) {
         this.stockQuantity = stockQuantity;
+    }
+
+    /**
+     * Gets the category name of the product.
+     *
+     * @return the name of the category
+     */
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    /**
+     * Sets the category name of the product.
+     *
+     * @param categoryName the name of the category to set
+     */
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 }

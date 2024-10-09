@@ -203,7 +203,7 @@ public class Order {
         if(order==null) throw new NullPointerException();
         List<ProductDTO> newDTOList = new ArrayList<>();
         for (Product product : order.getOrderItems()) {
-            newDTOList.add(new ProductDTO(product.getProductId(), product.getProductName(), product.getPrice(), product.getStockQuantity()));
+            newDTOList.add(new ProductDTO(product.getProductId(), product.getProductName(), product.getPrice(), product.getStockQuantity(), product.getProductName()));
         }
         return new OrderDTO(order.getOrderId(), order.getUserId(), order.getTotalPrice(),
                 order.getOrderDate(), newDTOList, order.packed);

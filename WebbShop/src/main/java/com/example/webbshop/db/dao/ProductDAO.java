@@ -12,11 +12,11 @@ import java.util.List;
  * Provides methods to create, read, update, and delete products.
  */
 public class ProductDAO {
-    private static final String ADD_PRODUCT_QUERY = "INSERT INTO Products (product_name, price, stock_quantity, created_at) VALUES (?, ?, ?, ?)";
-    private static final String UPDATE_PRODUCT_QUERY = "UPDATE Products SET product_name = ?, price = ?, stock_quantity = ? WHERE product_id = ?";
-    private static final String DELETE_PRODUCT_QUERY = "DELETE FROM Products WHERE product_id = ?";
-    private static final String GET_PRODUCT_BY_ID_QUERY = "SELECT * FROM Products WHERE product_id = ?";
-    private static final String GET_ALL_PRODUCTS_QUERY = "SELECT * FROM Products";
+    private static final String ADD_PRODUCT_QUERY = "INSERT INTO products (product_name, price, stock_quantity, created_at, category_id) VALUES (?, ?, ?, ?, ?)";
+    private static final String UPDATE_PRODUCT_QUERY = "UPDATE products SET product_name = ?, price = ?, stock_quantity = ?, category_id = ? WHERE product_id = ?";
+    private static final String DELETE_PRODUCT_QUERY = "DELETE FROM products WHERE product_id = ?";
+    private static final String GET_PRODUCT_BY_ID_QUERY = "SELECT * FROM products WHERE product_id = ?";
+    private static final String GET_ALL_PRODUCTS_QUERY = "SELECT * FROM products";
 
     /**
      * Adds a new product to the database.
@@ -24,29 +24,24 @@ public class ProductDAO {
      * @param product the Product object to be added
      * @return the added Product object with its generated ID, or null if insertion failed
      */
-    public Product addProduct(Product product) {
+    public boolean addProduct(Product product) {
         try (Connection connection = DatabaseConnectionManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(ADD_PRODUCT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setString(1, product.getProductName());
-            stmt.setInt(2, product.getPrice());
+            stmt.setDouble(2, product.getPrice());
             stmt.setInt(3, product.getStockQuantity());
             stmt.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
+            stmt.setInt(5, product.getCategoryId());
 
-            int affectedRows = stmt.executeUpdate();
-            if (affectedRows > 0) {
-                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        product.setProductId(generatedKeys.getInt(1));
-                    }
-                }
-            }
-            return product;
+            int rowsInserted = stmt.executeUpdate();
+            return rowsInserted > 0;
         } catch (SQLException e) {
             e.printStackTrace();
-            return null;
+            return false;
         }
     }
+
 
     /**
      * Updates an existing product in the database.
@@ -57,12 +52,11 @@ public class ProductDAO {
     public boolean updateProduct(Product product) {
         try (Connection connection = DatabaseConnectionManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(UPDATE_PRODUCT_QUERY)) {
-
             stmt.setString(1, product.getProductName());
             stmt.setInt(2, product.getPrice());
             stmt.setInt(3, product.getStockQuantity());
-            stmt.setInt(4, product.getProductId());
-
+            stmt.setInt(4, product.getCategoryId());
+            stmt.setInt(5, product.getProductId());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -80,7 +74,6 @@ public class ProductDAO {
         boolean rowDeleted = false;
         try (Connection connection = DatabaseConnectionManager.getConnection();
              PreparedStatement stmt = connection.prepareStatement(DELETE_PRODUCT_QUERY)) {
-
             stmt.setInt(1, productId);
             rowDeleted = stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -108,8 +101,9 @@ public class ProductDAO {
                         rs.getString("product_name"),
                         rs.getInt("price"),
                         rs.getInt("stock_quantity"),
+                        rs.getInt("category_id"),
                         rs.getTimestamp("created_at")
-                );
+                        );
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -134,12 +128,18 @@ public class ProductDAO {
                         rs.getString("product_name"),
                         rs.getInt("price"),
                         rs.getInt("stock_quantity"),
+                        rs.getInt("category_id"),
                         rs.getTimestamp("created_at")
-                ));
+                        ));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return products;
+    }
+
+    public static void main(String[] args) {
+        ProductDAO productDAO = new ProductDAO();
+        System.out.println(productDAO.getAllProducts());
     }
 }
